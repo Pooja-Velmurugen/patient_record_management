@@ -1,6 +1,14 @@
 <?php
 include 'db_connection.php';
-$result = $conn->query("SELECT * FROM patients");
+
+$search = isset($_POST['search']) ? $_POST['search'] : '';
+
+$sql = "SELECT * FROM patients";
+if ($search != '') {
+    $sql .= " WHERE name LIKE '%$search%' OR contact LIKE '%$search%'";
+}
+
+$result = $conn->query($sql);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,7 +52,7 @@ $result = $conn->query("SELECT * FROM patients");
             font-size: 1.2rem;
             padding: 7px 25px;
             border-radius: 25px;
-            text-decoration:none;
+            text-decoration: none;
             transition: transform 0.3s ease, background-color 0.3s ease;
             font-family: 'Raleway', sans-serif;
         }
@@ -67,21 +75,19 @@ $result = $conn->query("SELECT * FROM patients");
             border-radius: 10px;
             overflow: hidden;
             animation: fadeInUp 1.5s ease;
-            width:750px;
-            
+            width: 750px;
         }
 
         .table thead {
             background: #6c757d;
             color: #fff;
-            height:45px
+            height: 45px;
         }
 
         .table tbody tr {
             transition: background-color 0.3s ease;
-            height:45px;
+            height: 45px;
             color: #000000;
-
         }
 
         .table tbody tr:hover {
@@ -143,9 +149,16 @@ $result = $conn->query("SELECT * FROM patients");
 <body>
     <div class="container">
         <h2 class="text-center">Patient Records</h2>
-        <br>
+
+        <center>
+        <form method="POST" class="mb-4">
+            <input type="text" name="search" class="form-control" placeholder="Search by Name or Contact" value="<?php echo htmlspecialchars($search); ?>" style="width: 50%; margin: 0 auto;">
+        </form>
+        </center>
+        <br>   
         <a href="add_patient.php" class="btn btn-primary mb-4">Add Patient</a>
-    <br><br><br>
+        <br>
+        <br>
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -174,6 +187,7 @@ $result = $conn->query("SELECT * FROM patients");
             </tbody>
         </table>
     </div>
+
     <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
